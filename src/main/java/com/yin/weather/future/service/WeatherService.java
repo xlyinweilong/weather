@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -43,15 +44,15 @@ public class WeatherService {
         int successCount = 0;
         int errorCount = 0;
         for (DictStationEntity station : dictStationDao.findAll()) {
-            String url = "http://www.weather.com.cn/data/cityinfo/" + station.getStationCode() + ".html";
+            String url = "https://www.tianqiapi.com/api?version=v1&cityid=" + station.getStationCode();
             try {
                 Map<String, Object> map = weatherHttpClient.loadJson2Map(url);
-                Map subMap = (Map) map.get("weatherinfo");
+                Map subMap = (Map)((List) map.get("data")).get(0);
                 WeatherEntity weather = new WeatherEntity();
                 weather.setStationCode(station.getStationCode());
-                weather.setTempHighest(new BigDecimal(subMap.get("temp1").toString().replace("℃", "")));
-                weather.setTempLowest(new BigDecimal(subMap.get("temp2").toString().replace("℃", "")));
-                weather.setWeather(subMap.get("weather").toString());
+                weather.setTempHighest(new BigDecimal(subMap.get("tem1").toString().replace("℃", "")));
+                weather.setTempLowest(new BigDecimal(subMap.get("tem2").toString().replace("℃", "")));
+                weather.setWeather(subMap.get("wea").toString());
                 weatherDao.save(weather);
                 successCount++;
             } catch (Exception e) {

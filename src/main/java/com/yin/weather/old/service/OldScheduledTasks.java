@@ -14,7 +14,7 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.net.URL;
@@ -29,7 +29,7 @@ import java.util.List;
  * @author yin.weilong
  * @date 2018.11.07
  */
-@Component
+@Service
 public class OldScheduledTasks {
 
     private static final Logger log = LoggerFactory.getLogger(OldScheduledTasks.class);
@@ -42,13 +42,16 @@ public class OldScheduledTasks {
     private DictStationDao dictStationDao;
     @Autowired
     private WeatherHttpClient weatherHttpClient;
+    @Autowired
+    private SupplementTasks supplementTasks;
 
 
-//    @Scheduled(cron = "0 5 23  * * * ")
+//    @Scheduled(cron = "0 33 11  * * * ")
     public void startOldTask() throws Exception {
         log.info("天气调度器开始触发");
         Date d1 = new Date();
-        this.loadMonthPage();
+        supplementTasks.findAll();
+//        this.loadMonthPage();
         log.debug("天气调度器运行结束:" + (System.currentTimeMillis() - d1.getTime()));
     }
 
@@ -137,6 +140,7 @@ public class OldScheduledTasks {
                             String yearAndMonth = text.split("月")[0];
                             String year = yearAndMonth.split("年")[0];
                             String month = yearAndMonth.split("年")[1];
+
                             this.loadWeather(year, month, baseUrl + getUrl(href), station.getStationCode());
                         }
                     }

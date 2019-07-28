@@ -26,7 +26,7 @@ public class ScheduledTasks {
     @Autowired
     private WeatherHttpClient weatherHttpClient;
 
-    @Scheduled(cron = "0 10 11  * * * ")
+    @Scheduled(cron = "0 0 11  * * * ")
     public void startTask() throws Exception {
         log.info("天气调度器开始触发");
         Date d1 = new Date();
